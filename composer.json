@@ -1,0 +1,15 @@
+{
+  "name": "flamesphp/mesh",
+  "description": "Flames: Mesh",
+  "type": "library",
+  "license": "MIT",
+  "minimum-stability": "dev",
+  "prefer-stable": true,
+  "require": {
+    "php": ">=8.5",
+    "ext-mbstring": "*",
+    "ext-ctype": "*",
+    "ext-json": "*",
+    "ext-pcre": "*"
+  }
+}
