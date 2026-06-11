@@ -17,6 +17,7 @@ use Flames\Mesh\Token;
  *   {% asset '/assets/test.js' async defer %}
  *   {% asset '/assets/test.css' %}
  *   {% asset '/assets/test.scss' %}
+ *   {% asset '/assets/test.less' %}
  *
  * @internal
  */
@@ -27,7 +28,7 @@ final class AssetTokenParser extends AbstractTokenParser
         $expr = $this->parser->getExpressionParser()->parseExpression();
 
         if ($expr instanceof ConstantExpression && !AssetNode::isAssetPath($expr->getAttribute('value'))) {
-            throw new SyntaxError('The "asset" tag expects a path ending in ".js", ".css" or ".scss".', $token->getLine(), $this->parser->getStream()->getSourceContext());
+            throw new SyntaxError('The "asset" tag expects a path ending in ".js", ".css", ".scss" or ".less".', $token->getLine(), $this->parser->getStream()->getSourceContext());
         }
 
         $attributes = $this->parseAttributes();

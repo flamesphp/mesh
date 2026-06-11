@@ -1399,6 +1399,15 @@ final class CoreExtension extends AbstractExtension
             return sprintf('<link rel="stylesheet"%s href="%s">', $attributeString, $escapedCssPath);
         }
 
+        if (str_ends_with($lowerPath, '.less')) {
+            $cssPath = \Flames\Transpiler\Less\Parser::toWebPath(
+                \Flames\Transpiler\Less\Parser::parse($path)
+            );
+            $escapedCssPath = htmlspecialchars($cssPath, ENT_QUOTES | ENT_COMPAT, 'UTF-8');
+
+            return sprintf('<link rel="stylesheet"%s href="%s">', $attributeString, $escapedCssPath);
+        }
+
         return '';
     }
 

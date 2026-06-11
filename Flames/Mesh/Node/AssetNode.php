@@ -44,6 +44,7 @@ class AssetNode extends Node implements NodeOutputInterface
 
         return str_ends_with($lower, '.js')
             || str_ends_with($lower, '.css')
-            || str_ends_with($lower, '.scss');
+            || str_ends_with($lower, '.scss')
+            || str_ends_with($lower, '.less');
     }
 }
