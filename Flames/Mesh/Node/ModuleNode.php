@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 
 /*
  * This file is part of Template.
@@ -171,11 +173,6 @@ final class ModuleNode extends Node
             ->write("parent::__construct(\$env);\n\n")
             ->write("\$this->source = \$this->getSourceContext();\n\n")
         ;
-
-        // parent
-        if (!$this->hasNode('parent')) {
-            $compiler->write("\$this->parent = false;\n\n");
-        }
 
         $countTraits = \count($this->getNode('traits'));
         if ($countTraits) {

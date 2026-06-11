@@ -66,6 +66,7 @@ use Flames\Mesh\TemplateFunction;
 use Flames\Mesh\TemplateTest;
 use Flames\Mesh\TemplateWrapper;
 use Flames\Mesh\TokenParser\ApplyTokenParser;
+use Flames\Mesh\TokenParser\AssetTokenParser;
 use Flames\Mesh\TokenParser\BlockTokenParser;
 use Flames\Mesh\TokenParser\DeprecatedTokenParser;
 use Flames\Mesh\TokenParser\DoTokenParser;
@@ -173,6 +174,7 @@ final class CoreExtension extends AbstractExtension
             new IfTokenParser(),
             new ExtendsTokenParser(),
             new IncludeTokenParser(),
+            new AssetTokenParser(),
             new BlockTokenParser(),
             new UseTokenParser(),
             new MacroTokenParser(),
@@ -1365,6 +1367,62 @@ final class CoreExtension extends AbstractExtension
     public static function testIterable($value)
     {
         return is_iterable($value);
+    }
+
+    /**
+     * Renders a static JS or CSS asset tag from an include path.
+     *
+     * @param list<string> $attributes
+     *
+     * @internal
+     */
+    public static function renderAsset(string $path, array $attributes = []): string
+    {
+        $escapedPath = htmlspecialchars($path, ENT_QUOTES | ENT_COMPAT, 'UTF-8');
+        $attributeString = self::renderAssetAttributes($attributes);
+        $lowerPath = strtolower($path);
+
+        if (str_ends_with($lowerPath, '.js')) {
+            return sprintf('<script%s src="%s"></script>', $attributeString, $escapedPath);
+        }
+
+        if (str_ends_with($lowerPath, '.css')) {
+            return sprintf('<link rel="stylesheet"%s href="%s">', $attributeString, $escapedPath);
+        }
+
+        if (str_ends_with($lowerPath, '.scss')) {
+            $cssPath = \Flames\Transpiler\Scss\Parser::toWebPath(
+                \Flames\Transpiler\Scss\Parser::parse($path)
+            );
+            $escapedCssPath = htmlspecialchars($cssPath, ENT_QUOTES | ENT_COMPAT, 'UTF-8');
+
+            return sprintf('<link rel="stylesheet"%s href="%s">', $attributeString, $escapedCssPath);
+        }
+
+        return '';
+    }
+
+    /**
+     * @param list<string> $attributes
+     */
+    private static function renderAssetAttributes(array $attributes): string
+    {
+        $rendered = '';
+
+        foreach ($attributes as $attribute) {
+            if (!\is_string($attribute) || $attribute === '') {
+                continue;
+            }
+
+            $safeAttribute = preg_replace('/[^a-z0-9:_-]/i', '', $attribute) ?? '';
+            if ($safeAttribute === '') {
+                continue;
+            }
+
+            $rendered .= ' ' . $safeAttribute;
+        }
+
+        return $rendered;
     }
 
     /**

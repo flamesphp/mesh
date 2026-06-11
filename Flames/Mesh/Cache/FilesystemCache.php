@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 
 /*
  * This file is part of Template.
@@ -31,7 +33,7 @@ class FilesystemCache implements CacheInterface
     {
         $hash = hash('xxh128', $className);
 
-        return $this->directory.$hash[0].$hash[1].'/'.$hash.'.php';
+        return $this->directory.$hash[0].$hash[1].'/'.$hash;
     }
 
     public function load(string $key): void

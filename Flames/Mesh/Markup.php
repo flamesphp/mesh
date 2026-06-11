@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 
 // Twig fork: https://github.com/twigphp/Twig
 

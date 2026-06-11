@@ -122,12 +122,12 @@ class Node implements \Countable, \IteratorAggregate
         unset($this->attributes[$name]);
     }
 
-    public function hasNode(string $name): bool
+    public function hasNode(string|int $name): bool
     {
         return isset($this->nodes[$name]);
     }
 
-    public function getNode(string $name): self
+    public function getNode(string|int $name): self
     {
         if (!isset($this->nodes[$name])) {
             throw new \LogicException(sprintf('Node "%s" does not exist for Node "%s".', $name, static::class));
@@ -136,12 +136,12 @@ class Node implements \Countable, \IteratorAggregate
         return $this->nodes[$name];
     }
 
-    public function setNode(string $name, self $node): void
+    public function setNode(string|int $name, self $node): void
     {
         $this->nodes[$name] = $node;
     }
 
-    public function removeNode(string $name): void
+    public function removeNode(string|int $name): void
     {
         unset($this->nodes[$name]);
     }

@@ -19,7 +19,7 @@ abstract class Template
     public const ARRAY_CALL = 'array';
     public const METHOD_CALL = 'method';
 
-    protected ?self $parent = null;
+    protected self|false|null $parent = null;
     protected array $parents = [];
     protected Environment $env;
     protected array $blocks = [];
