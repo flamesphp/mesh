@@ -49,7 +49,7 @@ final class EmbedTokenParser extends IncludeTokenParser
             new Token(/* Token::BLOCK_END_TYPE */ 3, '', $token->getLine()),
         ]);
 
-        $module = $this->parser->parse($stream, [$this, 'decideBlockEnd'], true);
+        $module = $this->parser->parse($stream, $this->decideBlockEnd(...), true);
 
         // override the parent with the correct one
         if ($fakeParentToken === $parentToken) {

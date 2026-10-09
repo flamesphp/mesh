@@ -17,15 +17,13 @@ class Compiler
     private string $source = '';
     private int $indentation = 0;
     private string $indentStr = '';
-    private Environment $env;
     private array $debugInfo = [];
     private int $sourceOffset = 0;
     private int $sourceLine = 1;
     private int $varNameSalt = 0;
 
-    public function __construct(Environment $env)
+    public function __construct(private readonly Environment $env)
     {
-        $this->env = $env;
     }
 
     public function getEnvironment(): Environment

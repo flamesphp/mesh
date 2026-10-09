@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Flames\Mesh;
 
-use Flames\Kernel;
+use App\App;
 use Flames\Mesh\Cache\CacheInterface;
 use Flames\Mesh\Cache\FilesystemCache;
 use Flames\Mesh\Cache\NullCache;
@@ -103,7 +103,7 @@ class Environment
      */
     public function __construct(LoaderInterface $loader, $options = [])
     {
-        if (Kernel::MODULE === 'CLIENT') {
+        if (App::MODULE === 'CLIENT') {
             self::loadCtypePolyfill();
         }
 
@@ -375,7 +375,7 @@ class Environment
                      * the cache.
                      */
 
-                    if (Kernel::MODULE === 'SERVER') {
+                    if (App::MODULE === 'SERVER') {
                         eval('?>'.$content);
                     } else {
                         eval($content);
@@ -486,9 +486,7 @@ class Environment
      */
     public function tokenize(Source $source): TokenStream
     {
-        if (null === $this->lexer) {
-            $this->lexer = new Lexer($this);
-        }
+        $this->lexer ??= new Lexer($this);
 
         return $this->lexer->tokenize($source);
     }
@@ -505,9 +503,7 @@ class Environment
      */
     public function parse(TokenStream $stream): ModuleNode
     {
-        if (null === $this->parser) {
-            $this->parser = new Parser($this);
-        }
+        $this->parser ??= new Parser($this);
 
         return $this->parser->parse($stream);
     }
@@ -522,9 +518,7 @@ class Environment
      */
     public function compile(Node $node): string
     {
-        if (null === $this->compiler) {
-            $this->compiler = new Compiler($this);
-        }
+        $this->compiler ??= new Compiler($this);
 
         return $this->compiler->compile($node)->getSource();
     }
@@ -805,9 +799,7 @@ class Environment
     public function getGlobals(): array
     {
         if ($this->extensionSet->isInitialized()) {
-            if (null === $this->resolvedGlobals) {
-                $this->resolvedGlobals = array_merge($this->extensionSet->getGlobals(), $this->globals);
-            }
+            $this->resolvedGlobals ??= array_merge($this->extensionSet->getGlobals(), $this->globals);
 
             return $this->resolvedGlobals;
         }

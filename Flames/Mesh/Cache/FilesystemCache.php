@@ -21,12 +21,10 @@ class FilesystemCache implements CacheInterface
     public const FORCE_BYTECODE_INVALIDATION = 1;
 
     private $directory;
-    private $options;
 
-    public function __construct(string $directory, int $options = 0)
+    public function __construct(string $directory, private readonly int $options = 0)
     {
         $this->directory = rtrim($directory, '\/').'/';
-        $this->options = $options;
     }
 
     public function generateKey(string $name, string $className): string

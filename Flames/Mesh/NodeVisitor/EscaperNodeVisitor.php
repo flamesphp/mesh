@@ -139,7 +139,7 @@ final class EscaperNodeVisitor implements NodeVisitorInterface
             return $node;
         }
 
-        $class = \get_class($node);
+        $class = $node::class;
 
         return new $class($this->getEscaperFilter($type, $expression), $node->getTemplateLine());
     }
@@ -168,9 +168,7 @@ final class EscaperNodeVisitor implements NodeVisitorInterface
         $safe = $this->safeAnalysis->getSafe($expression);
 
         if (null === $safe) {
-            if (null === $this->traverser) {
-                $this->traverser = new NodeTraverser($env, [$this->safeAnalysis]);
-            }
+            $this->traverser ??= new NodeTraverser($env, [$this->safeAnalysis]);
 
             $this->safeAnalysis->setSafeVars($this->safeVars);
 

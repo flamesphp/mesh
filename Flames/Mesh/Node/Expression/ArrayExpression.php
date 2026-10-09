@@ -49,22 +49,12 @@ class ArrayExpression extends AbstractExpression
 
     public function hasElement(AbstractExpression $key): bool
     {
-        foreach ($this->getKeyValuePairs() as $pair) {
-            // we compare the string representation of the keys
-            // to avoid comparing the line numbers which are not relevant here.
-            if ((string) $key === (string) $pair['key']) {
-                return true;
-            }
-        }
-
-        return false;
+        return array_any($this->getKeyValuePairs(), fn($pair) => (string) $key === (string) $pair['key']);
     }
 
     public function addElement(AbstractExpression $value, ?AbstractExpression $key = null): void
     {
-        if (null === $key) {
-            $key = new ConstantExpression(++$this->index, $value->getTemplateLine());
-        }
+        $key ??= new ConstantExpression(++$this->index, $value->getTemplateLine());
 
         array_push($this->nodes, $key, $value);
     }
@@ -108,12 +98,6 @@ class ArrayExpression extends AbstractExpression
 
     private function hasSpreadItem(array $pairs): bool
     {
-        foreach ($pairs as $pair) {
-            if ($pair['value']->hasAttribute('spread')) {
-                return true;
-            }
-        }
-
-        return false;
+        return array_any($pairs, fn($pair) => $pair['value']->hasAttribute('spread'));
     }
 }

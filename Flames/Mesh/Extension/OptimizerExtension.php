@@ -20,11 +20,8 @@ use Flames\Mesh\NodeVisitor\OptimizerNodeVisitor;
  */
 final class OptimizerExtension extends AbstractExtension
 {
-    private $optimizers;
-
-    public function __construct(int $optimizers = -1)
+    public function __construct(private readonly int $optimizers = -1)
     {
-        $this->optimizers = $optimizers;
     }
 
     public function getNodeVisitors(): array

@@ -9,18 +9,16 @@ namespace Flames\Mesh;
 /**
  * @internal
  */
-class Markup implements \Countable, \JsonSerializable
+class Markup implements \Countable, \JsonSerializable, \Stringable
 {
     private $content;
-    private $charset;
 
-    public function __construct($content, $charset)
+    public function __construct($content, private $charset)
     {
         $this->content = (string) $content;
-        $this->charset = $charset;
     }
 
-    public function __toString()
+    public function __toString(): string
     {
         return $this->content;
     }

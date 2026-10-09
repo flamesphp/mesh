@@ -43,7 +43,7 @@ abstract class CallExpression extends AbstractExpression
                     $compiler->raw(sprintf('$this->env->getRuntime(\'%s\')->%s', $callable[0], $callable[1]));
                 }
             } elseif (\is_array($callable) && $callable[0] instanceof ExtensionInterface) {
-                $class = \get_class($callable[0]);
+                $class = $callable[0]::class;
                 if (!$compiler->getEnvironment()->hasExtension($class)) {
                     // Compile a non-optimized call to trigger a \Mesh\Error\RuntimeError, which cannot be a compile-time error
                     $compiler->raw(sprintf('$this->env->getExtension(\'%s\')', $class));
@@ -216,14 +216,7 @@ abstract class CallExpression extends AbstractExpression
         }
 
         if (!empty($parameters)) {
-            $unknownParameter = null;
-            foreach ($parameters as $parameter) {
-                if ($parameter instanceof Node) {
-                    $unknownParameter = $parameter;
-                    break;
-                }
-            }
-
+            $unknownParameter = array_find($parameters, fn($parameter) => $parameter instanceof Node);
             throw new SyntaxError(
                 sprintf(
                     'Unknown argument%s "%s" for %s "%s(%s)".',
@@ -315,7 +308,7 @@ abstract class CallExpression extends AbstractExpression
             $callable = $callableName = $r->name;
         }
 
-        if ($checkVisibility && \is_array($callable) && method_exists(...$callable) && !(new \ReflectionMethod(...$callable))->isPublic()) {
+        if ($checkVisibility && \is_array($callable) && method_exists(...$callable) && !new \ReflectionMethod(...$callable)->isPublic()) {
             $callable = $r->getClosure();
         }
 

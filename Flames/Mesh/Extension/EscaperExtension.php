@@ -60,9 +60,9 @@ final class EscaperExtension extends AbstractExtension
     public function getFilters(): array
     {
         return [
-            new TemplateFilter('escape', [self::class, 'escape'], ['needs_environment' => true, 'is_safe_callback' => [self::class, 'escapeFilterIsSafe']]),
-            new TemplateFilter('e', [self::class, 'escape'], ['needs_environment' => true, 'is_safe_callback' => [self::class, 'escapeFilterIsSafe']]),
-            new TemplateFilter('raw', [self::class, 'raw'], ['is_safe' => ['all']]),
+            new TemplateFilter('escape', self::escape(...), ['needs_environment' => true, 'is_safe_callback' => self::escapeFilterIsSafe(...)]),
+            new TemplateFilter('e', self::escape(...), ['needs_environment' => true, 'is_safe_callback' => self::escapeFilterIsSafe(...)]),
+            new TemplateFilter('raw', self::raw(...), ['is_safe' => ['all']]),
         ];
     }
 
@@ -77,7 +77,7 @@ final class EscaperExtension extends AbstractExtension
     public function setDefaultStrategy($defaultStrategy): void
     {
         if ('name' === $defaultStrategy) {
-            $defaultStrategy = [FileExtensionEscapingStrategy::class, 'guess'];
+            $defaultStrategy = FileExtensionEscapingStrategy::guess(...);
         }
 
         $this->defaultStrategy = $defaultStrategy;
@@ -134,9 +134,7 @@ final class EscaperExtension extends AbstractExtension
     public function addSafeClass(string $class, array $strategies)
     {
         $class = ltrim($class, '\\');
-        if (!isset($this->safeClasses[$class])) {
-            $this->safeClasses[$class] = [];
-        }
+        $this->safeClasses[$class] ??= [];
         $this->safeClasses[$class] = array_merge($this->safeClasses[$class], $strategies);
 
         foreach ($strategies as $strategy) {
@@ -193,7 +191,7 @@ final class EscaperExtension extends AbstractExtension
         if (!\is_string($string)) {
             if (\is_object($string) && method_exists($string, '__toString')) {
                 if ($autoescape) {
-                    $c = \get_class($string);
+                    $c = $string::class;
                     $ext = $env->getExtension(self::class);
                     if (!isset($ext->safeClasses[$c])) {
                         $ext->safeClasses[$c] = [];
@@ -221,9 +219,7 @@ final class EscaperExtension extends AbstractExtension
             return '';
         }
 
-        if (null === $charset) {
-            $charset = $env->getCharset();
-        }
+        $charset ??= $env->getCharset();
 
         switch ($strategy) {
             case 'html':
@@ -330,7 +326,7 @@ final class EscaperExtension extends AbstractExtension
                 $string = preg_replace_callback('#[^a-zA-Z0-9]#Su', function ($matches) {
                     $char = $matches[0];
 
-                    return sprintf('\\%X ', 1 === \strlen($char) ? \ord($char) : mb_ord($char, 'UTF-8'));
+                    return sprintf('\\%X ', 1 === \strlen($char) ? \ord($char[0]) : mb_ord($char, 'UTF-8'));
                 }, $string);
 
                 if ('UTF-8' !== $charset) {
@@ -356,7 +352,7 @@ final class EscaperExtension extends AbstractExtension
                      * @license   https://framework.zend.com/license/new-bsd New BSD License
                      */
                     $chr = $matches[0];
-                    $ord = \ord($chr);
+                    $ord = \ord($chr[0]);
 
                     /*
                     * The following replaces characters undefined in HTML with the
@@ -384,11 +380,7 @@ final class EscaperExtension extends AbstractExtension
                             62 => '&gt;',   /* greater-than sign */
                         ];
 
-                        if (isset($entityMap[$ord])) {
-                            return $entityMap[$ord];
-                        }
-
-                        return sprintf('&#x%02X;', $ord);
+                        return $entityMap[$ord] ?? sprintf('&#x%02X;', $ord);
                     }
 
                     /*

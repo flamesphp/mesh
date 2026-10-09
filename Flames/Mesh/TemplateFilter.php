@@ -14,7 +14,6 @@ use Flames\Mesh\Node\Node;
  */
 final class TemplateFilter
 {
-    private $name;
     private $callable;
     private $options;
     private $arguments = [];
@@ -22,9 +21,8 @@ final class TemplateFilter
     /**
      * @param callable|array{class-string, string}|null $callable A callable implementing the filter. If null, you need to overwrite the "node_class" option to customize compilation.
      */
-    public function __construct(string $name, $callable = null, array $options = [])
+    public function __construct(private readonly string $name, $callable = null, array $options = [])
     {
-        $this->name = $name;
         $this->callable = $callable;
         $this->options = array_merge([
             'needs_environment' => false,

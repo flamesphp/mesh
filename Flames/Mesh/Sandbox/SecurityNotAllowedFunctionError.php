@@ -18,12 +18,9 @@ namespace Flames\Mesh\Sandbox;
  */
 final class SecurityNotAllowedFunctionError extends SecurityError
 {
-    private $functionName;
-
-    public function __construct(string $message, string $functionName)
+    public function __construct(string $message, private readonly string $functionName)
     {
         parent::__construct($message);
-        $this->functionName = $functionName;
     }
 
     public function getFunctionName(): string

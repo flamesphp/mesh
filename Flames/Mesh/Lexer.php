@@ -23,7 +23,6 @@ class Lexer
     private int $state = 0;
     private array $states = [];
     private array $brackets = [];
-    private Environment $env;
     private Source $source;
     private array $options;
     private array $regexes = [];
@@ -45,10 +44,8 @@ class Lexer
     public const REGEX_DQ_STRING_PART = '/[^#"\\\\]*(?:(?:\\\\.|#(?!\{))[^#"\\\\]*)*/As';
     public const PUNCTUATION = '()[]{}?:.,|';
 
-    public function __construct(Environment $env, array $options = [])
+    public function __construct(private readonly Environment $env, array $options = [])
     {
-        $this->env = $env;
-
         $this->options = array_merge([
             'tag_comment' => ['{#', '#}'],
             'tag_block' => ['{%', '%}'],
@@ -435,7 +432,7 @@ class Lexer
             array_keys($this->env->getBinaryOperators())
         );
 
-        $operators = array_combine($operators, array_map('strlen', $operators));
+        $operators = array_combine($operators, array_map(strlen(...), $operators));
         arsort($operators);
 
         $regex = [];

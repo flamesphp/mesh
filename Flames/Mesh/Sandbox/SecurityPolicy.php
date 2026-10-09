@@ -21,19 +21,11 @@ use Flames\Mesh\Template;
  */
 final class SecurityPolicy implements SecurityPolicyInterface
 {
-    private $allowedTags;
-    private $allowedFilters;
     private $allowedMethods;
-    private $allowedProperties;
-    private $allowedFunctions;
 
-    public function __construct(array $allowedTags = [], array $allowedFilters = [], array $allowedMethods = [], array $allowedProperties = [], array $allowedFunctions = [])
+    public function __construct(private array $allowedTags = [], private array $allowedFilters = [], array $allowedMethods = [], private array $allowedProperties = [], private array $allowedFunctions = [])
     {
-        $this->allowedTags = $allowedTags;
-        $this->allowedFilters = $allowedFilters;
         $this->setAllowedMethods($allowedMethods);
-        $this->allowedProperties = $allowedProperties;
-        $this->allowedFunctions = $allowedFunctions;
     }
 
     public function setAllowedTags(array $tags): void
@@ -50,7 +42,7 @@ final class SecurityPolicy implements SecurityPolicyInterface
     {
         $this->allowedMethods = [];
         foreach ($methods as $class => $m) {
-            $this->allowedMethods[$class] = array_map(function ($value) { return strtr($value, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'); }, \is_array($m) ? $m : [$m]);
+            $this->allowedMethods[$class] = array_map(fn($value) => strtr($value, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), \is_array($m) ? $m : [$m]);
         }
     }
 
@@ -101,23 +93,16 @@ final class SecurityPolicy implements SecurityPolicyInterface
         }
 
         if (!$allowed) {
-            $class = \get_class($obj);
+            $class = $obj::class;
             throw new SecurityNotAllowedMethodError(sprintf('Calling "%s" method on a "%s" object is not allowed.', $method, $class), $class, $method);
         }
     }
 
     public function checkPropertyAllowed($obj, $property): void
     {
-        $allowed = false;
-        foreach ($this->allowedProperties as $class => $properties) {
-            if ($obj instanceof $class && \in_array($property, \is_array($properties) ? $properties : [$properties])) {
-                $allowed = true;
-                break;
-            }
-        }
-
+        $allowed = array_any($this->allowedProperties, fn($properties, $class) => $obj instanceof $class && \in_array($property, \is_array($properties) ? $properties : [$properties]));
         if (!$allowed) {
-            $class = \get_class($obj);
+            $class = $obj::class;
             throw new SecurityNotAllowedPropertyError(sprintf('Calling "%s" property on a "%s" object is not allowed.', $property, $class), $class, $property);
         }
     }

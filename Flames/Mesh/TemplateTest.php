@@ -13,7 +13,6 @@ use Flames\Mesh\Node\Expression\TestExpression;
  */
 final class TemplateTest
 {
-    private $name;
     private $callable;
     private $options;
     private $arguments = [];
@@ -21,9 +20,8 @@ final class TemplateTest
     /**
      * @param callable|array{class-string, string}|null $callable A callable implementing the test. If null, you need to overwrite the "node_class" option to customize compilation.
      */
-    public function __construct(string $name, $callable = null, array $options = [])
+    public function __construct(private readonly string $name, $callable = null, array $options = [])
     {
-        $this->name = $name;
         $this->callable = $callable;
         $this->options = array_merge([
             'is_variadic' => false,

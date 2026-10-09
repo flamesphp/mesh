@@ -29,13 +29,11 @@ use Flames\Mesh\Profiler\Profile;
  */
 final class ProfilerNodeVisitor implements NodeVisitorInterface
 {
-    private $extensionName;
     private $varName;
 
-    public function __construct(string $extensionName)
+    public function __construct(private readonly string $extensionName)
     {
-        $this->extensionName = $extensionName;
-        $this->varName = '__internal_' . hash('xxh128', $extensionName);
+        $this->varName = '__internal_' . hash('xxh128', $this->extensionName);
     }
 
     public function enterNode(Node $node, Environment $env): Node

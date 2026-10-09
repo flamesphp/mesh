@@ -42,11 +42,11 @@ use Flames\Mesh\Node\TextNode;
  */
 final class OptimizerNodeVisitor implements NodeVisitorInterface
 {
-    public const OPTIMIZE_ALL = -1;
-    public const OPTIMIZE_NONE = 0;
-    public const OPTIMIZE_FOR = 2;
-    public const OPTIMIZE_RAW_FILTER = 4;
-    public const OPTIMIZE_TEXT_NODES = 8;
+    public const int OPTIMIZE_ALL = -1;
+    public const int OPTIMIZE_NONE = 0;
+    public const int OPTIMIZE_FOR = 2;
+    public const int OPTIMIZE_RAW_FILTER = 4;
+    public const int OPTIMIZE_TEXT_NODES = 8;
 
     private $loops = [];
     private $loopsTargets = [];
@@ -109,7 +109,7 @@ final class OptimizerNodeVisitor implements NodeVisitorInterface
             return $node;
         }
 
-        if (Node::class === get_class($node)) {
+        if (Node::class === $node::class) {
             return new TextNode($text, $node->getTemplateLine());
         }
 

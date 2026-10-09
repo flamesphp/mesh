@@ -34,20 +34,15 @@ class ExpressionParser
 {
     public const OPERATOR_LEFT = 1;
     public const OPERATOR_RIGHT = 2;
-
-    private $parser;
-    private $env;
     /** @var array<string, array{precedence: int, class: class-string<AbstractUnary>}> */
     private $unaryOperators;
     /** @var array<string, array{precedence: int, class: class-string<AbstractBinary>, associativity: self::OPERATOR_*}> */
     private $binaryOperators;
 
-    public function __construct(Parser $parser, Environment $env)
+    public function __construct(private readonly Parser $parser, private readonly Environment $env)
     {
-        $this->parser = $parser;
-        $this->env = $env;
-        $this->unaryOperators = $env->getUnaryOperators();
-        $this->binaryOperators = $env->getBinaryOperators();
+        $this->unaryOperators = $this->env->getUnaryOperators();
+        $this->binaryOperators = $this->env->getBinaryOperators();
     }
 
     public function parseExpression($precedence = 0, $allowArrow = false)
@@ -610,7 +605,7 @@ class ExpressionParser
             $name = null;
             if ($namedArguments && $token = $stream->nextIf(/* Token::OPERATOR_TYPE */ 8, '=')) {
                 if (!$value instanceof NameExpression) {
-                    throw new SyntaxError(sprintf('A parameter name must be a string, "%s" given.', \get_class($value)), $token->getLine(), $stream->getSourceContext());
+                    throw new SyntaxError(sprintf('A parameter name must be a string, "%s" given.', $value::class), $token->getLine(), $stream->getSourceContext());
                 }
                 $name = $value->getAttribute('name');
 

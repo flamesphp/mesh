@@ -33,15 +33,13 @@ class Parser
     private $blocks;
     private $blockStack;
     private $macros;
-    private $env;
     private $importedSymbols;
     private $traits;
     private $embeddedTemplates = [];
     private $varNameSalt = 0;
 
-    public function __construct(Environment $env)
+    public function __construct(private readonly Environment $env)
     {
-        $this->env = $env;
     }
 
     public function getVarName(): string
@@ -56,13 +54,9 @@ class Parser
         $this->stack[] = $vars;
 
         // node visitors
-        if (null === $this->visitors) {
-            $this->visitors = $this->env->getNodeVisitors();
-        }
+        $this->visitors ??= $this->env->getNodeVisitors();
 
-        if (null === $this->expressionParser) {
-            $this->expressionParser = new ExpressionParser($this, $this->env);
-        }
+        $this->expressionParser ??= new ExpressionParser($this, $this->env);
 
         $this->stream = $stream;
         $this->parent = null;
@@ -332,7 +326,7 @@ class Parser
 
         // here, $nested means "being at the root level of a child template"
         // we need to discard the wrapping "Node" for the "body" node
-        $nested = $nested || Node::class !== \get_class($node);
+        $nested = $nested || Node::class !== $node::class;
         foreach ($node as $k => $n) {
             if (null !== $n && null === $this->filterBodyNodes($n, $nested)) {
                 $node->removeNode($k);

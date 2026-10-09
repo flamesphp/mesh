@@ -137,9 +137,7 @@ final class CoreExtension extends AbstractExtension
      */
     public function getTimezone()
     {
-        if (null === $this->timezone) {
-            $this->timezone = new \DateTimeZone(date_default_timezone_get());
-        }
+        $this->timezone ??= new \DateTimeZone(date_default_timezone_get());
 
         return $this->timezone;
     }
@@ -194,50 +192,50 @@ final class CoreExtension extends AbstractExtension
     {
         return [
             // formatting filters
-            new TemplateFilter('date', [self::class, 'dateFormatFilter'], ['needs_environment' => true]),
-            new TemplateFilter('date_modify', [self::class, 'dateModifyFilter'], ['needs_environment' => true]),
-            new TemplateFilter('format', [self::class, 'sprintf']),
-            new TemplateFilter('replace', [self::class, 'replaceFilter']),
-            new TemplateFilter('number_format', [self::class, 'numberFormatFilter'], ['needs_environment' => true]),
+            new TemplateFilter('date', self::dateFormatFilter(...), ['needs_environment' => true]),
+            new TemplateFilter('date_modify', self::dateModifyFilter(...), ['needs_environment' => true]),
+            new TemplateFilter('format', self::sprintf(...)),
+            new TemplateFilter('replace', self::replaceFilter(...)),
+            new TemplateFilter('number_format', self::numberFormatFilter(...), ['needs_environment' => true]),
             new TemplateFilter('abs', 'abs'),
-            new TemplateFilter('round', [self::class, 'round']),
+            new TemplateFilter('round', self::round(...)),
 
             // encoding
-            new TemplateFilter('url_encode', [self::class, 'urlencodeFilter']),
+            new TemplateFilter('url_encode', self::urlencodeFilter(...)),
             new TemplateFilter('json_encode', 'json_encode'),
-            new TemplateFilter('convert_encoding', [self::class, 'convertEncoding']),
+            new TemplateFilter('convert_encoding', self::convertEncoding(...)),
 
             // string filters
-            new TemplateFilter('title', [self::class, 'titleStringFilter'], ['needs_environment' => true]),
-            new TemplateFilter('capitalize', [self::class, 'capitalizeStringFilter'], ['needs_environment' => true]),
-            new TemplateFilter('upper', [self::class, 'upperFilter'], ['needs_environment' => true]),
-            new TemplateFilter('lower', [self::class, 'lowerFilter'], ['needs_environment' => true]),
-            new TemplateFilter('striptags', [self::class, 'striptags']),
-            new TemplateFilter('trim', [self::class, 'trimFilter']),
-            new TemplateFilter('nl2br', [self::class, 'nl2br'], ['pre_escape' => 'html', 'is_safe' => ['html']]),
-            new TemplateFilter('spaceless', [self::class, 'spaceless'], ['is_safe' => ['html']]),
+            new TemplateFilter('title', self::titleStringFilter(...), ['needs_environment' => true]),
+            new TemplateFilter('capitalize', self::capitalizeStringFilter(...), ['needs_environment' => true]),
+            new TemplateFilter('upper', self::upperFilter(...), ['needs_environment' => true]),
+            new TemplateFilter('lower', self::lowerFilter(...), ['needs_environment' => true]),
+            new TemplateFilter('striptags', self::striptags(...)),
+            new TemplateFilter('trim', self::trimFilter(...)),
+            new TemplateFilter('nl2br', self::nl2br(...), ['pre_escape' => 'html', 'is_safe' => ['html']]),
+            new TemplateFilter('spaceless', self::spaceless(...), ['is_safe' => ['html']]),
 
             // array helpers
-            new TemplateFilter('join', [self::class, 'joinFilter']),
-            new TemplateFilter('split', [self::class, 'splitFilter'], ['needs_environment' => true]),
-            new TemplateFilter('sort', [self::class, 'sortFilter'], ['needs_environment' => true]),
-            new TemplateFilter('merge', [self::class, 'arrayMerge']),
-            new TemplateFilter('batch', [self::class, 'arrayBatch']),
-            new TemplateFilter('column', [self::class, 'arrayColumn']),
-            new TemplateFilter('filter', [self::class, 'arrayFilter'], ['needs_environment' => true]),
-            new TemplateFilter('map', [self::class, 'arrayMap'], ['needs_environment' => true]),
-            new TemplateFilter('reduce', [self::class, 'arrayReduce'], ['needs_environment' => true]),
+            new TemplateFilter('join', self::joinFilter(...)),
+            new TemplateFilter('split', self::splitFilter(...), ['needs_environment' => true]),
+            new TemplateFilter('sort', self::sortFilter(...), ['needs_environment' => true]),
+            new TemplateFilter('merge', self::arrayMerge(...)),
+            new TemplateFilter('batch', self::arrayBatch(...)),
+            new TemplateFilter('column', self::arrayColumn(...)),
+            new TemplateFilter('filter', self::arrayFilter(...), ['needs_environment' => true]),
+            new TemplateFilter('map', self::arrayMap(...), ['needs_environment' => true]),
+            new TemplateFilter('reduce', self::arrayReduce(...), ['needs_environment' => true]),
 
             // string/array filters
-            new TemplateFilter('reverse', [self::class, 'reverseFilter'], ['needs_environment' => true]),
-            new TemplateFilter('length', [self::class, 'lengthFilter'], ['needs_environment' => true]),
-            new TemplateFilter('slice', [self::class, 'slice'], ['needs_environment' => true]),
-            new TemplateFilter('first', [self::class, 'first'], ['needs_environment' => true]),
-            new TemplateFilter('last', [self::class, 'last'], ['needs_environment' => true]),
+            new TemplateFilter('reverse', self::reverseFilter(...), ['needs_environment' => true]),
+            new TemplateFilter('length', self::lengthFilter(...), ['needs_environment' => true]),
+            new TemplateFilter('slice', self::slice(...), ['needs_environment' => true]),
+            new TemplateFilter('first', self::first(...), ['needs_environment' => true]),
+            new TemplateFilter('last', self::last(...), ['needs_environment' => true]),
 
             // iteration and runtime
-            new TemplateFilter('default', [self::class, 'defaultFilter'], ['node_class' => DefaultFilter::class]),
-            new TemplateFilter('keys', [self::class, 'getArrayKeysFilter']),
+            new TemplateFilter('default', self::defaultFilter(...), ['node_class' => DefaultFilter::class]),
+            new TemplateFilter('keys', self::getArrayKeysFilter(...)),
         ];
     }
 
@@ -247,12 +245,12 @@ final class CoreExtension extends AbstractExtension
             new TemplateFunction('max', 'max'),
             new TemplateFunction('min', 'min'),
             new TemplateFunction('range', 'range'),
-            new TemplateFunction('constant', [self::class, 'constant']),
-            new TemplateFunction('cycle', [self::class, 'cycle']),
-            new TemplateFunction('random', [self::class, 'random'], ['needs_environment' => true]),
-            new TemplateFunction('date', [self::class, 'dateConverter'], ['needs_environment' => true]),
-            new TemplateFunction('include', [self::class, 'include'], ['needs_environment' => true, 'needs_context' => true, 'is_safe' => ['all']]),
-            new TemplateFunction('source', [self::class, 'source'], ['needs_environment' => true, 'is_safe' => ['all']]),
+            new TemplateFunction('constant', self::constant(...)),
+            new TemplateFunction('cycle', self::cycle(...)),
+            new TemplateFunction('random', self::random(...), ['needs_environment' => true]),
+            new TemplateFunction('date', self::dateConverter(...), ['needs_environment' => true]),
+            new TemplateFunction('include', self::include(...), ['needs_environment' => true, 'needs_context' => true, 'is_safe' => ['all']]),
+            new TemplateFunction('source', self::source(...), ['needs_environment' => true, 'is_safe' => ['all']]),
         ];
     }
 
@@ -267,7 +265,7 @@ final class CoreExtension extends AbstractExtension
             new TemplateTest('null', null, ['node_class' => NullTest::class]),
             new TemplateTest('divisible by', null, ['node_class' => DivisiblebyTest::class, 'one_mandatory_argument' => true]),
             new TemplateTest('constant', null, ['node_class' => ConstantTest::class]),
-            new TemplateTest('empty', [self::class, 'testEmpty']),
+            new TemplateTest('empty', self::testEmpty(...)),
             new TemplateTest('iterable', 'is_iterable'),
         ];
     }
@@ -519,9 +517,7 @@ final class CoreExtension extends AbstractExtension
         }
 
         if (null === $date || 'now' === $date) {
-            if (null === $date) {
-                $date = 'now';
-            }
+            $date ??= 'now';
 
             return new \DateTime($date, false !== $timezone ? $timezone : $env->getExtension(self::class)->getTimezone());
         }
@@ -553,7 +549,7 @@ final class CoreExtension extends AbstractExtension
     public static function replaceFilter($str, $from)
     {
         if (!is_iterable($from)) {
-            throw new RuntimeError(sprintf('The "replace" filter expects an array or "Traversable" as replace values, got "%s".', \is_object($from) ? \get_class($from) : \gettype($from)));
+            throw new RuntimeError(sprintf('The "replace" filter expects an array or "Traversable" as replace values, got "%s".', get_debug_type($from)));
         }
 
         return strtr($str ?? '', self::toArray($from));
@@ -604,17 +600,11 @@ final class CoreExtension extends AbstractExtension
     public static function numberFormatFilter(Environment $env, $number, $decimal = null, $decimalPoint = null, $thousandSep = null)
     {
         $defaults = $env->getExtension(self::class)->getNumberFormat();
-        if (null === $decimal) {
-            $decimal = $defaults[0];
-        }
+        $decimal ??= $defaults[0];
 
-        if (null === $decimalPoint) {
-            $decimalPoint = $defaults[1];
-        }
+        $decimalPoint ??= $defaults[1];
 
-        if (null === $thousandSep) {
-            $thousandSep = $defaults[2];
-        }
+        $thousandSep ??= $defaults[2];
 
         return number_format((float) $number, $decimal, $decimalPoint, $thousandSep);
     }
@@ -689,7 +679,7 @@ final class CoreExtension extends AbstractExtension
             if ($start >= 0 && $length >= 0 && $item instanceof \Iterator) {
                 try {
                     return iterator_to_array(new \LimitIterator($item, $start, $length ?? -1), $preserveKeys);
-                } catch (\OutOfBoundsException $e) {
+                } catch (\OutOfBoundsException) {
                     return [];
                 }
             }
@@ -806,7 +796,7 @@ final class CoreExtension extends AbstractExtension
      */
     public static function splitFilter(Environment $env, $value, $delimiter, $limit = null)
     {
-        $value = $value ?? '';
+        $value ??= '';
 
         if ('' !== $delimiter) {
             return null === $limit ? explode($delimiter, $value) : explode($delimiter, $value, $limit);
@@ -1101,20 +1091,14 @@ final class CoreExtension extends AbstractExtension
      */
     public static function trimFilter($string, $characterMask = null, $side = 'both')
     {
-        if (null === $characterMask) {
-            $characterMask = " \t\n\r\0\x0B";
-        }
+        $characterMask ??= " \t\n\r\0\x0B";
 
-        switch ($side) {
-            case 'both':
-                return trim($string ?? '', $characterMask);
-            case 'left':
-                return ltrim($string ?? '', $characterMask);
-            case 'right':
-                return rtrim($string ?? '', $characterMask);
-            default:
-                throw new RuntimeError('Trimming side must be "left", "right" or "both".');
-        }
+        return match ($side) {
+            'both' => trim($string ?? '', $characterMask),
+            'left' => ltrim($string ?? '', $characterMask),
+            'right' => rtrim($string ?? '', $characterMask),
+            default => throw new RuntimeError('Trimming side must be "left", "right" or "both".'),
+        };
     }
 
     /**
@@ -1182,7 +1166,7 @@ final class CoreExtension extends AbstractExtension
             return mb_strlen($thing, $env->getCharset());
         }
 
-        if ($thing instanceof \Countable || \is_array($thing) || $thing instanceof \SimpleXMLElement) {
+        if (is_countable($thing) || $thing instanceof \SimpleXMLElement) {
             return \count($thing);
         }
 
@@ -1526,10 +1510,10 @@ final class CoreExtension extends AbstractExtension
     {
         if (null !== $object) {
             if ('class' === $constant) {
-                return \get_class($object);
+                return $object::class;
             }
 
-            $constant = \get_class($object).'::'.$constant;
+            $constant = $object::class.'::'.$constant;
         }
 
         if (!\defined($constant)) {
@@ -1560,7 +1544,7 @@ final class CoreExtension extends AbstractExtension
                 return true;
             }
 
-            $constant = \get_class($object).'::'.$constant;
+            $constant = $object::class.'::'.$constant;
         }
 
         return \defined($constant);
@@ -1580,7 +1564,7 @@ final class CoreExtension extends AbstractExtension
     public static function arrayBatch($items, $size, $fill = null, $preserveKeys = true)
     {
         if (!is_iterable($items)) {
-            throw new RuntimeError(sprintf('The "batch" filter expects an array or "Traversable", got "%s".', \is_object($items) ? \get_class($items) : \gettype($items)));
+            throw new RuntimeError(sprintf('The "batch" filter expects an array or "Traversable", got "%s".', get_debug_type($items)));
         }
 
         $size = ceil($size);
@@ -1622,7 +1606,7 @@ final class CoreExtension extends AbstractExtension
         if (/* Template::METHOD_CALL */ 'method' !== $type) {
             $arrayItem = \is_bool($item) || \is_float($item) ? (int) $item : $item;
 
-            if (((\is_array($object) || $object instanceof \ArrayObject) && (isset($object[$arrayItem]) || \array_key_exists($arrayItem, (array) $object)))
+            if (((\is_array($object) || $object instanceof \ArrayObject) && (isset($object[$arrayItem]) || \array_key_exists((string) $arrayItem, (array) $object)))
                 || ($object instanceof \ArrayAccess && isset($object[$arrayItem]))
             ) {
                 if ($isDefinedTest) {
@@ -1642,9 +1626,9 @@ final class CoreExtension extends AbstractExtension
                 }
 
                 if ($object instanceof \ArrayAccess) {
-                    $message = sprintf('Key "%s" in object with ArrayAccess of class "%s" does not exist.', $arrayItem, \get_class($object));
+                    $message = sprintf('Key "%s" in object with ArrayAccess of class "%s" does not exist.', $arrayItem, $object::class);
                 } elseif (\is_object($object)) {
-                    $message = sprintf('Impossible to access a key "%s" on an object of class "%s" that does not implement ArrayAccess interface.', $item, \get_class($object));
+                    $message = sprintf('Impossible to access a key "%s" on an object of class "%s" that does not implement ArrayAccess interface.', $item, $object::class);
                 } elseif (\is_array($object)) {
                     if (empty($object)) {
                         $message = sprintf('Key "%s" does not exist as the array is empty.', $arrayItem);
@@ -1708,14 +1692,14 @@ final class CoreExtension extends AbstractExtension
 
         static $cache = [];
 
-        $class = \get_class($object);
+        $class = $object::class;
 
         // object method
         // precedence: getXxx() > isXxx() > hasXxx()
         if (!isset($cache[$class])) {
             $methods = get_class_methods($object);
             sort($methods);
-            $lcMethods = array_map('strtolower', $methods);
+            $lcMethods = array_map(strtolower(...), $methods);
             $classCache = [];
             foreach ($methods as $i => $method) {
                 $classCache[$method] = $method;
@@ -1739,13 +1723,9 @@ final class CoreExtension extends AbstractExtension
 
                 // skip get() and is() methods (in which case, $name is empty)
                 if ($name) {
-                    if (!isset($classCache[$name])) {
-                        $classCache[$name] = $method;
-                    }
+                    $classCache[$name] ??= $method;
 
-                    if (!isset($classCache[$lcName])) {
-                        $classCache[$lcName] = $method;
-                    }
+                    $classCache[$lcName] ??= $method;
                 }
             }
             $cache[$class] = $classCache;
@@ -1829,7 +1809,7 @@ final class CoreExtension extends AbstractExtension
     public static function arrayFilter(Environment $env, $array, $arrow)
     {
         if (!is_iterable($array)) {
-            throw new RuntimeError(sprintf('The "filter" filter expects an array or "Traversable", got "%s".', \is_object($array) ? \get_class($array) : \gettype($array)));
+            throw new RuntimeError(sprintf('The "filter" filter expects an array or "Traversable", got "%s".', get_debug_type($array)));
         }
 
         self::checkArrowInSandbox($env, $arrow, 'filter', 'filter');
@@ -1913,7 +1893,7 @@ final class CoreExtension extends AbstractExtension
      */
     public static function checkArrowInSandbox(Environment $env, $arrow, $thing, $type)
     {
-        if (!$arrow instanceof \Closure && $env->hasExtension('\Flames\Mesh\Extension\SandboxExtension') && $env->getExtension('\Flames\Mesh\Extension\SandboxExtension')->isSandboxed()) {
+        if (!$arrow instanceof \Closure && $env->hasExtension(\Flames\Mesh\Extension\SandboxExtension::class) && $env->getExtension(\Flames\Mesh\Extension\SandboxExtension::class)->isSandboxed()) {
             throw new RuntimeError(sprintf('The callable passed to the "%s" %s must be a Closure in sandbox mode.', $thing, $type));
         }
     }

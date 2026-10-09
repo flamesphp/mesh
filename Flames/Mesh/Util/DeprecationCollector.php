@@ -20,13 +20,10 @@ use Flames\Mesh\Source;
 /**
  * @internal
  */
-final class DeprecationCollector
+final readonly class DeprecationCollector
 {
-    private $twig;
-
-    public function __construct(Environment $twig)
+    public function __construct(private Environment $twig)
     {
-        $this->twig = $twig;
     }
 
     /**
@@ -67,7 +64,7 @@ final class DeprecationCollector
         foreach ($iterator as $name => $contents) {
             try {
                 $this->twig->parse($this->twig->tokenize(new Source($contents, $name)));
-            } catch (SyntaxError $e) {
+            } catch (SyntaxError) {
                 // ignore templates containing syntax errors
             }
         }

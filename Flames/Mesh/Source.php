@@ -11,22 +11,18 @@ use Flames\Mesh\Source\PostProcess;
 /**
  * @internal
  */
-final class Source
+final readonly class Source
 {
     private string $code;
-    private string $name;
-    private string $path;
 
     /**
      * @param string $code The template source code
      * @param string $name The template logical name
      * @param string $path The filesystem path of the template if any
      */
-    public function __construct(string $code, string $name, string $path = '')
+    public function __construct(string $code, private string $name, private string $path = '')
     {
         $this->code = PostProcess::parse($code);
-        $this->name = $name;
-        $this->path = $path;
     }
 
     public function getCode(): string

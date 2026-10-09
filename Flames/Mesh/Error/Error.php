@@ -21,9 +21,7 @@ use Flames\Mesh\Template;
  */
 class Error extends \Exception
 {
-    private $lineno;
     private $name;
-    private $rawMessage;
     private $sourcePath;
     private $sourceCode;
 
@@ -32,11 +30,11 @@ class Error extends \Exception
      *
      * By default, automatic guessing is enabled.
      *
-     * @param string      $message The error message
+     * @param string $rawMessage The error message
      * @param int         $lineno  The template line where the error occurred
      * @param Source|null $source  The source context where the error occurred
      */
-    public function __construct(string $message, int $lineno = -1, ?Source $source = null, ?\Throwable $previous = null)
+    public function __construct(private string $rawMessage, private int $lineno = -1, ?Source $source = null, ?\Throwable $previous = null)
     {
         parent::__construct('', 0, $previous);
 
@@ -47,10 +45,7 @@ class Error extends \Exception
             $this->sourceCode = $source->getCode();
             $this->sourcePath = $source->getPath();
         }
-
-        $this->lineno = $lineno;
         $this->name = $name;
-        $this->rawMessage = $message;
         $this->updateRepr();
     }
 
@@ -154,11 +149,11 @@ class Error extends \Exception
         $backtrace = debug_backtrace(\DEBUG_BACKTRACE_IGNORE_ARGS | \DEBUG_BACKTRACE_PROVIDE_OBJECT);
         foreach ($backtrace as $trace) {
             if (isset($trace['object']) && $trace['object'] instanceof Template) {
-                $currentClass = \get_class($trace['object']);
+                $currentClass = $trace['object']::class;
                 $isEmbedContainer = null === $templateClass ? false : str_starts_with($templateClass, $currentClass);
                 if (null === $this->name || ($this->name == $trace['object']->getTemplateName() && !$isEmbedContainer)) {
                     $template = $trace['object'];
-                    $templateClass = \get_class($trace['object']);
+                    $templateClass = $trace['object']::class;
                 }
             }
         }

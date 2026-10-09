@@ -20,11 +20,8 @@ use Flames\Mesh\NodeVisitor\YieldNotReadyNodeVisitor;
  */
 final class YieldNotReadyExtension extends AbstractExtension
 {
-    private $useYield;
-
-    public function __construct(bool $useYield)
+    public function __construct(private readonly bool $useYield)
     {
-        $this->useYield = $useYield;
     }
 
     public function getNodeVisitors(): array

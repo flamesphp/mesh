@@ -102,9 +102,7 @@ final class SafeAnalysisNodeVisitor implements NodeVisitorInterface
             $args = $node->getNode('arguments');
             if ($filter = $env->getFilter($name)) {
                 $safe = $filter->getSafe($args);
-                if (null === $safe) {
-                    $safe = $this->intersectSafe($this->getSafe($node->getNode('node')), $filter->getPreservesSafety());
-                }
+                $safe ??= $this->intersectSafe($this->getSafe($node->getNode('node')), $filter->getPreservesSafety());
                 $this->setSafe($node, $safe);
             } else {
                 $this->setSafe($node, []);

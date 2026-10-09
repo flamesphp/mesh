@@ -22,12 +22,9 @@ use Flames\Mesh\Source;
  * @internal
  */
 #[YieldReady]
-class Node implements \Countable, \IteratorAggregate
+class Node implements \Countable, \IteratorAggregate, \Stringable
 {
     protected array $nodes;
-    protected array $attributes;
-    protected int $lineno;
-    protected ?string $tag;
 
     private ?Source $sourceContext = null;
 
@@ -37,20 +34,17 @@ class Node implements \Countable, \IteratorAggregate
      * @param int    $lineno     The line number
      * @param string $tag        The tag name associated with the Node
      */
-    public function __construct(array $nodes = [], array $attributes = [], int $lineno = 0, ?string $tag = null)
+    public function __construct(array $nodes = [], protected array $attributes = [], protected int $lineno = 0, protected ?string $tag = null)
     {
         foreach ($nodes as $name => $node) {
             if (!$node instanceof self) {
-                throw new \InvalidArgumentException(sprintf('Using "%s" for the value of node "%s" of "%s" is not supported. You must pass a \Mesh\Node\Node instance.', \is_object($node) ? \get_class($node) : (null === $node ? 'null' : \gettype($node)), $name, static::class));
+                throw new \InvalidArgumentException(sprintf('Using "%s" for the value of node "%s" of "%s" is not supported. You must pass a \Mesh\Node\Node instance.', \is_object($node) ? $node::class : (null === $node ? 'null' : \gettype($node)), $name, static::class));
             }
         }
         $this->nodes = $nodes;
-        $this->attributes = $attributes;
-        $this->lineno = $lineno;
-        $this->tag = $tag;
     }
 
-    public function __toString()
+    public function __toString(): string
     {
         $attributes = [];
         foreach ($this->attributes as $name => $value) {

@@ -56,7 +56,7 @@ final class SetTokenParser extends AbstractTokenParser
 
             $stream->expect(/* Token::BLOCK_END_TYPE */ 3);
 
-            $values = $this->parser->subparse([$this, 'decideBlockEnd'], true);
+            $values = $this->parser->subparse($this->decideBlockEnd(...), true);
             $stream->expect(/* Token::BLOCK_END_TYPE */ 3);
         }
 

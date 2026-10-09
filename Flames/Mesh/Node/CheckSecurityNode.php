@@ -22,16 +22,8 @@ use Flames\Mesh\Compiler;
 #[YieldReady]
 class CheckSecurityNode extends Node
 {
-    private $usedFilters;
-    private $usedTags;
-    private $usedFunctions;
-
-    public function __construct(array $usedFilters, array $usedTags, array $usedFunctions)
+    public function __construct(private readonly array $usedFilters, private readonly array $usedTags, private readonly array $usedFunctions)
     {
-        $this->usedFilters = $usedFilters;
-        $this->usedTags = $usedTags;
-        $this->usedFunctions = $usedFunctions;
-
         parent::__construct();
     }
 

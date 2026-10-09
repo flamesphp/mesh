@@ -8,7 +8,7 @@ use Flames\Collection\Arr;
 
 class Mesh
 {
-    public static function render(string $html, Arr|array $data = null): ?string
+    public static function render(string $html, Arr|array|null $data = null): ?string
     {
         if ($data instanceof Arr) {
             $data = (array)$data;

@@ -21,19 +21,17 @@ abstract class Template
 
     protected self|false|null $parent = null;
     protected array $parents = [];
-    protected Environment $env;
     protected array $blocks = [];
     protected array $traits = [];
     protected array $extensions = [];
     protected bool $sandbox = false;
 
-    private bool $useYield;
+    private readonly bool $useYield;
 
-    public function __construct(Environment $env)
+    public function __construct(protected Environment $env)
     {
-        $this->env = $env;
-        $this->useYield = $env->useYield();
-        $this->extensions = $env->getExtensions();
+        $this->useYield = $this->env->useYield();
+        $this->extensions = $this->env->getExtensions();
     }
 
     /**
@@ -80,9 +78,7 @@ abstract class Template
                 return $this->parents[$parent->getSourceContext()->getName()] = $parent;
             }
 
-            if (!isset($this->parents[$parent])) {
-                $this->parents[$parent] = $this->loadTemplate($parent);
-            }
+            $this->parents[$parent] ??= $this->loadTemplate($parent);
         } catch (LoaderError $e) {
             $e->setSourceContext(null);
             $e->guess();

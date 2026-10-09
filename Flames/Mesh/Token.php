@@ -9,33 +9,26 @@ namespace Flames\Mesh;
 /**
  * @internal
  */
-final class Token
+final readonly class Token implements \Stringable
 {
-    private int $type;
-    private int|float|string $value;
-    private int $lineno;
+    public const int EOF_TYPE = -1;
+    public const int TEXT_TYPE = 0;
+    public const int BLOCK_START_TYPE = 1;
+    public const int VAR_START_TYPE = 2;
+    public const int BLOCK_END_TYPE = 3;
+    public const int VAR_END_TYPE = 4;
+    public const int NAME_TYPE = 5;
+    public const int NUMBER_TYPE = 6;
+    public const int STRING_TYPE = 7;
+    public const int OPERATOR_TYPE = 8;
+    public const int PUNCTUATION_TYPE = 9;
+    public const int INTERPOLATION_START_TYPE = 10;
+    public const int INTERPOLATION_END_TYPE = 11;
+    public const int ARROW_TYPE = 12;
+    public const int SPREAD_TYPE = 13;
 
-    public const EOF_TYPE = -1;
-    public const TEXT_TYPE = 0;
-    public const BLOCK_START_TYPE = 1;
-    public const VAR_START_TYPE = 2;
-    public const BLOCK_END_TYPE = 3;
-    public const VAR_END_TYPE = 4;
-    public const NAME_TYPE = 5;
-    public const NUMBER_TYPE = 6;
-    public const STRING_TYPE = 7;
-    public const OPERATOR_TYPE = 8;
-    public const PUNCTUATION_TYPE = 9;
-    public const INTERPOLATION_START_TYPE = 10;
-    public const INTERPOLATION_END_TYPE = 11;
-    public const ARROW_TYPE = 12;
-    public const SPREAD_TYPE = 13;
-
-    public function __construct(int $type, int|float|string $value, int $lineno)
+    public function __construct(private int $type, private int|float|string $value, private int $lineno)
     {
-        $this->type = $type;
-        $this->value = $value;
-        $this->lineno = $lineno;
     }
 
     public function __toString(): string

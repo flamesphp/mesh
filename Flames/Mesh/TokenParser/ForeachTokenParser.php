@@ -49,10 +49,10 @@ final class ForeachTokenParser extends AbstractTokenParser
         $valueTarget = new AssignNameExpression($valueTarget->getAttribute('name'), $valueTarget->getTemplateLine());
 
         $stream->expect(/* Token::BLOCK_END_TYPE */ 3);
-        $body = $this->parser->subparse([$this, 'decideForeachFork']);
+        $body = $this->parser->subparse($this->decideForeachFork(...));
         if ('else' == $stream->next()->getValue()) {
             $stream->expect(/* Token::BLOCK_END_TYPE */ 3);
-            $else = $this->parser->subparse([$this, 'decideForeachEnd'], true);
+            $else = $this->parser->subparse($this->decideForeachEnd(...), true);
         } else {
             $else = null;
         }

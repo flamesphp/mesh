@@ -11,15 +11,13 @@ use Flames\Mesh\Error\SyntaxError;
 /**
  * @internal
  */
-final class TokenStream
+final class TokenStream implements \Stringable
 {
-    private array $tokens;
     private int $current = 0;
-    private Source $source;
+    private readonly Source $source;
 
-    public function __construct(array $tokens, ?Source $source = null)
+    public function __construct(private array $tokens, ?Source $source = null)
     {
-        $this->tokens = $tokens;
         $this->source = $source ?? new Source('', '');
     }
 

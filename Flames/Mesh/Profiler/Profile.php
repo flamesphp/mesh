@@ -18,22 +18,17 @@ namespace Flames\Mesh\Profiler;
  */
 final class Profile implements \IteratorAggregate, \Serializable
 {
-    public const ROOT = 'ROOT';
-    public const BLOCK = 'block';
-    public const TEMPLATE = 'template';
-    public const MACRO = 'macro';
-
-    private $template;
+    public const string ROOT = 'ROOT';
+    public const string BLOCK = 'block';
+    public const string TEMPLATE = 'template';
+    public const string MACRO = 'macro';
     private $name;
-    private $type;
     private $starts = [];
     private $ends = [];
     private $profiles = [];
 
-    public function __construct(string $template = 'main', string $type = self::ROOT, string $name = 'main')
+    public function __construct(private string $template = 'main', private string $type = self::ROOT, string $name = 'main')
     {
-        $this->template = $template;
-        $this->type = $type;
         $this->name = str_starts_with($name, '__internal_') ? 'INTERNAL' : $name;
         $this->enter();
     }

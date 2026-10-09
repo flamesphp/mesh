@@ -9,21 +9,16 @@ namespace Flames\Mesh;
 /**
  * @internal
  */
-final class TemplateWrapper
+final readonly class TemplateWrapper
 {
-    private $env;
-    private $template;
-
     /**
      * This method is for internal use only and should never be called
      * directly (use Template\Environment::load() instead).
      *
      * @internal
      */
-    public function __construct(Environment $env, Template $template)
+    public function __construct(private Environment $env, private Template $template)
     {
-        $this->env = $env;
-        $this->template = $template;
     }
 
     public function render(array $context = []): string

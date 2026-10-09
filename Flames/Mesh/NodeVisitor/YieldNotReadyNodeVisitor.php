@@ -24,23 +24,21 @@ use function Flames\Template\NodeVisitor\trigger_deprecation;
  */
 final class YieldNotReadyNodeVisitor implements NodeVisitorInterface
 {
-    private $useYield;
     private $yieldReadyNodes = [];
 
-    public function __construct(bool $useYield)
+    public function __construct(private readonly bool $useYield)
     {
-        $this->useYield = $useYield;
     }
 
     public function enterNode(Node $node, Environment $env): Node
     {
-        $class = \get_class($node);
+        $class = $node::class;
 
         if ($node instanceof AbstractExpression || isset($this->yieldReadyNodes[$class])) {
             return $node;
         }
 
-        if (!$this->yieldReadyNodes[$class] = (bool) (new \ReflectionClass($class))->getAttributes(YieldReady::class)) {
+        if (!$this->yieldReadyNodes[$class] = (bool) new \ReflectionClass($class)->getAttributes(YieldReady::class)) {
             if ($this->useYield) {
                 throw new \LogicException(sprintf('You cannot enable the "use_yield" option of Template as node "%s" is not marked as ready for it; please make it ready and then flag it with the #[YieldReady] attribute.', $class));
             }
